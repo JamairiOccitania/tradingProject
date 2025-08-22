@@ -78,6 +78,23 @@ services:
       - "traefik.http.routers.trading-platform.tls.certresolver=myresolver" 
       - "traefik.http.services.trading-platform.loadbalancer.server.port=80"
 
+  mail:
+    image: mailhog/mailhog
+    ports:
+      - "1026:1025"  # SMTP port (externe:interne)
+      - "8026:8025"  # Web UI port (externe:interne)
+    networks:
+      - internal
+      - webgateway
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mailhog.rule=Host(`mailhog-tradingproject.jm.ordago.local`)"
+      - "traefik.http.routers.mailhog.tls=true"
+      - "traefik.http.routers.mailhog.tls.certresolver=myresolver"
+      - "traefik.http.services.mailhog.loadbalancer.server.port=8025"
+      - "traefik.docker.network=webgateway" 
+    
+
   pgadmin:
     image: dpage/pgadmin4:latest
     environment:

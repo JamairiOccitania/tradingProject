@@ -2,7 +2,7 @@ from celery import shared_task
 import pandas as pd
 from .oanda import OandaAPI
 from .strategies import rsi_sma_strategy
-from apitrading.models import Backtest
+from apps.apitrading.models import Backtest
 
 class Backtester:
     def __init__(self, api_key, account_id, asset, start_date, end_date, strategy_name, params):

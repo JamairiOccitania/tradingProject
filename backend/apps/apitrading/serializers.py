@@ -15,7 +15,8 @@ class UserSerializer(serializers.ModelSerializer):
 class APIKeySerializer(serializers.ModelSerializer):
     class Meta:
         model = APIKey
-        fields = ('oanda_api_key',)
+        fields = ('id', 'oanda_api_key', 'oanda_account_id', 'created_at')
+        read_only_fields = ('id', 'created_at')
 
 class TradeLogSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,3 +35,27 @@ class BotSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bot
         fields = ('id', 'name', 'asset', 'strategy', 'parameters', 'mode', 'status', 'logs')
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    uid = serializers.CharField()
+    token = serializers.CharField()
+    new_password = serializers.CharField(min_length=8)
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'date_joined')
+        read_only_fields = ('id', 'date_joined')
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField()
+    new_password = serializers.CharField(min_length=8)
+    confirm_password = serializers.CharField(min_length=8)
+
+    def validate(self, data):
+        if data['new_password'] != data['confirm_password']:
+            raise serializers.ValidationError("Les nouveaux mots de passe ne correspondent pas.")
+        return data

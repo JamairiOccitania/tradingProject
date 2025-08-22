@@ -28,31 +28,34 @@ class OandaAPI:
         # Logique pour trouver l'ID du compte live
         r = accounts.AccountList()
         self.client.request(r)
-        # Retourne le premier compte qui n'est pas un compte de pratique
         for acc in r.response['accounts']:
-            if 'practice' not in acc['id']:
+            if 'live' in acc['id']:
                 return acc['id']
-        # Fallback - à remplacer par votre ID de compte réel
-        return "YOUR_LIVE_ACCOUNT_ID"
+        # Fallback - à remplacer par votre ID de compte live si la recherche échoue
+        return "YOUR_LIVE_TRADING_ACCOUNT_ID"
 
-    def get_historical_data(self, instrument, count=500, granularity='H1'):
-        params = {
-            'count': count,
-            'granularity': granularity
+    def get_historical_data(self, instrument, count=100, granularity='M1'):
+        # Récupère les données historiques
+        r = instruments.InstrumentsCandles(instrument=instrument, params={"count": count, "granularity": granularity})
+        self.client.request(r)
+        return r.response
+
+    def get_account_summary(self, account_id):
+        # Récupère le résumé du compte
+        r = accounts.AccountSummary(account_id)
+        self.client.request(r)
+        return r.response
+
+    def place_order(self, instrument, units, order_type='MARKET'):
+        # Place un ordre (simplifié)
+        # En réalité, vous devrez gérer plus de paramètres comme les stops, limits, etc.
+        order_data = {
+            "order": {
+                "type": order_type,
+                "instrument": instrument,
+                "units": units
+            }
         }
-        r = instruments.InstrumentsCandles(instrument=instrument, params=params)
-        try:
-            self.client.request(r)
-            return r.response
-        except oandapyV20.exceptions.V20Error as e:
-            print(f"Error fetching historical data: {e}")
-            return None
-
-    def get_account_summary(self):
-        r = accounts.AccountSummary(accountID=self.account_id)
-        try:
-            self.client.request(r)
-            return r.response
-        except oandapyV20.exceptions.V20Error as e:
-            print(f"Error fetching account summary: {e}")
-            return None
+        r = orders.OrderCreate(self.account_id, data=order_data)
+        self.client.request(r)
+        return r.response

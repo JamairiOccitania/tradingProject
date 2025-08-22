@@ -1,10 +1,10 @@
 from celery import shared_task
 import time
-from apitrading.models import Bot, TradeLog, APIKey, Backtest
+from apps.apitrading.models import Bot, TradeLog, APIKey, Backtest
 from .oanda import OandaAPI
 from .strategies import rsi_sma_strategy
 from .backtester import Backtester
-from apitrading.utils import decrypt_key
+from apps.apitrading.utils import decrypt_key
 
 # Map des stratégies
 STRATEGY_MAP = {
@@ -41,8 +41,8 @@ def run_bot_task(bot_id):
 
             result = strategy_func(historical_data, bot.parameters)
             decision = result['decision']
-            current_price = result['current_price']
-            details = f"RSI: {result['rsi']:.2f}, SMA: {result['sma']:.2f}"
+            current_price = result['price']
+            details = result['details']
 
             # Log de la décision
             TradeLog.objects.create(bot=bot, decision=decision, price=current_price, details=details)
@@ -101,13 +101,13 @@ def run_backtest_task(backtest_id):
 
         results = backtester.run()
 
-        backtest.result = results
+        backtest.results = results
         backtest.status = 'completed'
         backtest.save()
 
     except Exception as e:
         if 'backtest' in locals():
             backtest.status = 'failed'
-            backtest.result = {'error': str(e)}
+            backtest.results = {'error': str(e)}
             backtest.save()
         print(f"Backtest failed for ID {backtest_id}: {e}")

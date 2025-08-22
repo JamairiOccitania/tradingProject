@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 
 
-class TradingConfig(AppConfig):
+class ApitradingConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'trading'
+    name = 'apps.apitrading'
+    verbose_name = 'API'

@@ -30,7 +30,8 @@ def rsi_sma_strategy(historical_data, params):
         
     return {
         'decision': decision,
-        'current_price': current_price,
+        'price': current_price,
         'rsi': rsi_val,
-        'sma': sma_val
+        'sma': sma_val,
+        'details': f'RSI: {rsi_val:.2f}, SMA: {sma_val:.2f}, Price: {current_price:.5f}'
     }
