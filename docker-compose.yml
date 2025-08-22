@@ -46,6 +46,45 @@ services:
     networks:
       - internal
 
+  celery-beat:
+    build:
+      context: ./backend
+    command: celery -A trading_platform beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - redis
+      - backend
+      - db
+    networks:
+      - internal
+
+  flower:
+    build:
+      context: ./backend
+    command: celery -A trading_platform flower --port=5555
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./backend/.env
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+      - celery
+    networks:
+      - internal
+      - webgateway
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.flower-tradingproject.rule=Host(`flower-tradingproject.jm.ordago.local`)"
+      - "traefik.http.routers.flower-tradingproject.tls=true"
+      - "traefik.http.routers.flower-tradingproject.tls.certresolver=myresolver"
+      - "traefik.http.services.flower-tradingproject.loadbalancer.server.port=5555"
+      - "traefik.docker.network=webgateway"
+
   frontend:
     build:
       context: ./frontend

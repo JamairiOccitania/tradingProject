@@ -1,12 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AppShell, Navbar, Header, Text, NavLink, Group, Button } from '@mantine/core';
-import { IconDashboard, IconRobot, IconKey, IconChartLine, IconLogout, IconUser } from '@tabler/icons-react';
+import { IconDashboard, IconRobot, IconChartLine, IconLogout, IconUser, IconTrendingUp } from '@tabler/icons-react';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import BotsPage from './pages/BotsPage';
-import APIKeyPage from './pages/APIKeyPage';
 import BacktestingPage from './pages/BacktestingPage';
+import AdvancedTradingPage from './pages/AdvancedTradingPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import AccountPage from './pages/AccountPage';
@@ -71,9 +71,9 @@ function App() {
             leftSection={<IconRobot size="1rem" />}
           />
           <NavLink
-            href="/api-key"
-            label="Clé API"
-            leftSection={<IconKey size="1rem" />}
+            href="/advanced-trading"
+            label="Trading Avancé"
+            leftSection={<IconTrendingUp size="1rem" />}
           />
           <NavLink
             href="/backtesting"
@@ -91,7 +91,7 @@ function App() {
           <Routes>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/bots" element={<BotsPage />} />
-            <Route path="/api-key" element={<APIKeyPage />} />
+            <Route path="/advanced-trading" element={<AdvancedTradingPage />} />
             <Route path="/backtesting" element={<BacktestingPage />} />
             <Route path="/account" element={<AccountPage />} />
             <Route path="*" element={<Navigate to="/dashboard" />} />
